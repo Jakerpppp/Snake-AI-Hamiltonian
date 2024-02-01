@@ -11,7 +11,7 @@ GREEN1 = (0, 255, 0)
 GREEN2 = (0, 155, 0)
 BLACK = (0, 0, 0)
 BLOCK_SIZE = 20
-SPEED = 20
+SPEED = 40
 
 Point = namedtuple('Point', 'x, y')
 
@@ -25,8 +25,8 @@ class SnakeGameAI:
 
     def __init__(self, cycle, w=120, h=140):
         pygame.init()
-        self.w = w * BLOCK_SIZE  # Convert grid blocks to pixels
-        self.h = h * BLOCK_SIZE  # Convert grid blocks to pixels
+        self.w = w #* BLOCK_SIZE  # Convert grid blocks to pixels
+        self.h = h #* BLOCK_SIZE  # Convert grid blocks to pixels
         self.cycle = cycle
         self.cycle_index = 0
         self.display = pygame.display.set_mode((self.w, self.h))
@@ -118,8 +118,8 @@ class SnakeGameAI:
 
     def _move(self):
         # Move the snake's head to the next point in the cycle
-        self.cycle_index += 1
         if self.cycle_index >= len(self.cycle):
             self.cycle_index = 0  # Loop back to the start of the cycle
         next_point = self.cycle[self.cycle_index]
         self.head = Point(next_point[0] * BLOCK_SIZE, next_point[1] * BLOCK_SIZE)
+        self.cycle_index += 1
