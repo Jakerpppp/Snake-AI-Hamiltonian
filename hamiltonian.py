@@ -7,27 +7,37 @@ BLOCK_SIZE = 20
 
 class Hamiltonian:
 
-    def __init__(self, width, height):
-        self.w = width
-        self.h = height
+    def __init__(self, width=640, height=480):
+        self.w = int(width / BLOCK_SIZE)
+        self.h = int(height / BLOCK_SIZE)
+        self.graph = self.createGraph()
 
-    def calculateSquares(self):
-        return ((self.w / BLOCK_SIZE ) * (self.h / BLOCK_SIZE))
-
-
+    def getTotal(self):
+        return self.w * self.h
+    
+    def createGraph(self):
+        start = []
+        for i in range (self.w):
+            current = []
+            for j in range (self.h):
+                current.append(1)
+            start.append(current)
+        print(start)
     
     
-    
-    
-    
-    
-    #Depth First Search through a Graph 
+    #Depth First Search through a Graph of Squares determining the Ham Cycle
     def calculateHamiltonianCycle(self):
-        pass
+        row = len(self.graph)
+        column = len(self.graph[0])
+        list = []
+        for i in range (row):
+            for j in range (column):
+                if self.graph[i][j] == 1:
+                    self.graph[i][j] = 0
+                    list.append[(i,j)]
+                    self.calculateHamiltonianCycle()
 
 
-class Graph:
-    
-    def __init__(self) -> None:
-        self.number = -1
+ham = Hamiltonian()
+ham.createGraph()
 
