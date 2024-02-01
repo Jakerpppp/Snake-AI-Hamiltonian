@@ -3,10 +3,11 @@ import numpy as np
 
 
 BLOCK_SIZE = 20
+#ideal width=640 height=480
 
 class Hamiltonian:
 
-    def __init__(self, width=120, height=140):
+    def __init__(self, width=20, height=20):
         self.w = int(width / BLOCK_SIZE)
         self.h = int(height / BLOCK_SIZE)
         self.graph = self.createGraph()
@@ -69,7 +70,7 @@ class Hamiltonian:
             with open("hamcycles.txt", "r") as file:
                 existing_cycles = file.read()
                 # Format the new cycle the same way as it's stored in the file
-                new_cycle_str = f"{self.w}x{self.h} Cycle: " + ' -> '.join([f"({x}, {y})" for x, y in new_cycle])
+                new_cycle_str = f"{self.w}x{self.h}\n" + ' -> '.join([f"({x}, {y})" for x, y in new_cycle])
                 if new_cycle_str in existing_cycles:
                     return True
         except FileNotFoundError:
@@ -80,7 +81,7 @@ class Hamiltonian:
         if not self.cycleExists(cycle):
             with open("hamcycles.txt", "a") as file:
                 cycle_str = ' -> '.join([f"({x}, {y})" for x, y in cycle])
-                file.write(f"{self.w}x{self.h} Cycle: {cycle_str}\n\n")
+                file.write(f"{self.w}x{self.h}\n{cycle_str}\n\n")
         
     def visualiseCycle(self):
         grid = np.zeros((self.h, self.w))
@@ -104,11 +105,11 @@ class Hamiltonian:
         plt.show()
 
 
-# # Example usage
+# Example usage
 # ham = Hamiltonian()
 # cycle = ham.calculateHamiltonianCycle()
 # if cycle:
 #     print("Hamiltonian Cycle found:")
-#     ham.visualiseCycle()
+#     #ham.visualiseCycle()
 # else:
 #     print("No Hamiltonian Cycle found.")
