@@ -42,7 +42,7 @@ class SnakeGameAI:
         self.score = 0
         self.food = None
         self._place_food()
-        self.frame_iteration = 0
+
         self.cycle_index = 1 # Start moving to the second point in the cycle next
 
 
@@ -52,6 +52,11 @@ class SnakeGameAI:
         y = random.randint(0, (self.h-BLOCK_SIZE )//BLOCK_SIZE )*BLOCK_SIZE
         self.food = Point(x, y)
         if self.food in self.snake:
+            if len(self.snake) == len(self.cycle):
+                print("Snake Complete!")
+                time.sleep(10)
+                pygame.quit()
+                quit()
             self._place_food()
 
 
@@ -70,7 +75,7 @@ class SnakeGameAI:
         
         # 3. check if game over
         game_over = False
-        if self.is_collision() or self.frame_iteration > 100*len(self.snake):
+        if self.is_collision():
             game_over = True
             return game_over
 
