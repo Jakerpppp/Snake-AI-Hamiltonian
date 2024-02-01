@@ -104,11 +104,11 @@ class Hamiltonian:
         plt.show()
 
 
-# Example usage
-ham = Hamiltonian()
-cycle = ham.calculateHamiltonianCycle()
-if cycle:
-    print("Hamiltonian Cycle found:")
-    ham.visualiseCycle()
-else:
-    print("No Hamiltonian Cycle found.")
+# # Example usage
+# ham = Hamiltonian()
+# cycle = ham.calculateHamiltonianCycle()
+# if cycle:
+#     print("Hamiltonian Cycle found:")
+#     ham.visualiseCycle()
+# else:
+#     print("No Hamiltonian Cycle found.")
