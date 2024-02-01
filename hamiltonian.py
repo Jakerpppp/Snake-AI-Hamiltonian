@@ -6,7 +6,7 @@ BLOCK_SIZE = 20
 
 class Hamiltonian:
 
-    def __init__(self, width=40, height=80):
+    def __init__(self, width=120, height=140):
         self.w = int(width / BLOCK_SIZE)
         self.h = int(height / BLOCK_SIZE)
         self.graph = self.createGraph()
@@ -23,10 +23,11 @@ class Hamiltonian:
             start.append(current)
         return start
     
-    
+    #Checks if valid move
     def isSafe(self, x, y):
         return 0 <= x < self.w and 0 <= y < self.h and self.graph[x][y] == 1 and not self.visited[x][y]
     
+    #The Backtracking Algorithm
     def calculateHamiltonianCycleUtil(self, x, y, steps):
         # Base Case - If we have visited every single square and check if we can return to the start
         if steps == self.getTotal():
@@ -58,9 +59,28 @@ class Hamiltonian:
         self.path.append((0, 0))
         
         if self.calculateHamiltonianCycleUtil(0, 0, 1):
+            self.writeCycleToFile(self.path)
             return self.path
         else:
             return None
+        
+    def cycleExists(self, new_cycle):
+        try:
+            with open("hamcycles.txt", "r") as file:
+                existing_cycles = file.read()
+                # Format the new cycle the same way as it's stored in the file
+                new_cycle_str = f"{self.w}x{self.h} Cycle: " + ' -> '.join([f"({x}, {y})" for x, y in new_cycle])
+                if new_cycle_str in existing_cycles:
+                    return True
+        except FileNotFoundError:
+            return False
+        return False
+
+    def writeCycleToFile(self, cycle):
+        if not self.cycleExists(cycle):
+            with open("hamcycles.txt", "a") as file:
+                cycle_str = ' -> '.join([f"({x}, {y})" for x, y in cycle])
+                file.write(f"{self.w}x{self.h} Cycle: {cycle_str}\n\n")
         
     def visualiseCycle(self):
         grid = np.zeros((self.h, self.w))
