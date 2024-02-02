@@ -7,7 +7,7 @@ BLOCK_SIZE = 20
 
 class Hamiltonian:
 
-    def __init__(self, width=20, height=20):
+    def __init__(self, width=160, height=160):
         self.w = int(width / BLOCK_SIZE)
         self.h = int(height / BLOCK_SIZE)
         self.graph = self.createGraph()
@@ -105,11 +105,12 @@ class Hamiltonian:
         plt.show()
 
 
-# Example usage
+
+# To Visulise the Ham Cycle: Remeber to Comment Out
 # ham = Hamiltonian()
 # cycle = ham.calculateHamiltonianCycle()
 # if cycle:
 #     print("Hamiltonian Cycle found:")
-#     #ham.visualiseCycle()
+#     ham.visualiseCycle()
 # else:
 #     print("No Hamiltonian Cycle found.")

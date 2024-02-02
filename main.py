@@ -3,15 +3,13 @@ from hamiltonian import Hamiltonian
 
 #Constants
 BLOCK_SIZE = 20
-WIDTH = 120
-HEIGHT = 120
+WIDTH = 160
+HEIGHT = 160
 
 pairs_dict = {}
 
 def parse_cycle(cycle_str):
-    # Splitting the cycle string into coordinate pairs
     pairs = cycle_str.split(" -> ")
-    # Converting each pair from string to tuple of integers
     tuple_list = [tuple(map(int, pair.strip("()").split(", "))) for pair in pairs]
     return tuple_list
 
@@ -40,6 +38,7 @@ if cycle_str:
     print("Reading from File")
     cycle = parse_cycle(cycle_str)
 else:
+    print("Not in File: Calculating")
     cycle = ham.calculateHamiltonianCycle()
 
 
