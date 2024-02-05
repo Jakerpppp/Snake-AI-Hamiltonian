@@ -7,7 +7,7 @@ BLOCK_SIZE = 20
 
 class Hamiltonian:
 
-    def __init__(self, width=160, height=160):
+    def __init__(self, width=200, height=200):
         self.w = int(width / BLOCK_SIZE)
         self.h = int(height / BLOCK_SIZE)
         self.graph = self.createGraph()
@@ -39,7 +39,7 @@ class Hamiltonian:
             return False  # Return to start is not possible, not a cycle
 
         # Recursive Case Depth First Search
-        for dx, dy in [(0, -1), (-1, 0), (0, 1), (1, 0)]:  # Left, Up, Right, Down
+        for dx, dy in [(0, -1), (-1, 0), (0, 1), (1, 0)]:  # Up, Left, Down, Right ->
             next_x, next_y = x + dx, y + dy
             if self.isSafe(next_x, next_y):
                 self.visited[next_x][next_y] = True
@@ -106,9 +106,10 @@ class Hamiltonian:
 
 
 
-# To Visulise the Ham Cycle: Remeber to Comment Out
 # ham = Hamiltonian()
-# cycle = ham.calculateHamiltonianCycle()
+# height = 120
+# width = 120
+# cycle = ham.calculateHamiltonianCycle(height, width)
 # if cycle:
 #     print("Hamiltonian Cycle found:")
 #     ham.visualiseCycle()

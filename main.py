@@ -3,8 +3,8 @@ from hamiltonian import Hamiltonian
 
 #Constants
 BLOCK_SIZE = 20
-WIDTH = 160
-HEIGHT = 160
+WIDTH = 140
+HEIGHT = 120
 
 pairs_dict = {}
 
@@ -39,7 +39,7 @@ if cycle_str:
     cycle = parse_cycle(cycle_str)
 else:
     print("Not in File: Calculating")
-    cycle = ham.calculateHamiltonianCycle()
+    #cycle = ham.calculateHamiltonianCycle()
 
 
 if cycle:
