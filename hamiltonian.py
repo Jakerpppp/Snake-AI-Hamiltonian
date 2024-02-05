@@ -106,10 +106,10 @@ class Hamiltonian:
 
 
 
-# ham = Hamiltonian()
 # height = 120
 # width = 120
-# cycle = ham.calculateHamiltonianCycle(height, width)
+# ham = Hamiltonian(height, width)
+# cycle = ham.calculateHamiltonianCycle()
 # if cycle:
 #     print("Hamiltonian Cycle found:")
 #     ham.visualiseCycle()

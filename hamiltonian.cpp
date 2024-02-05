@@ -84,26 +84,30 @@ std::vector<std::pair<int, int>> Hamiltonian::calculateHamiltonianCycle() {
 
 bool Hamiltonian::cycleExists() {
     std::ifstream file("hamcycles.txt");
-    std::string line, new_cycle_str = std::to_string(w) + "x" + std::to_string(h) + "\n";
+    if (!file.is_open()) {
+        return false;
+    }
+
+    // Read the entire content of the file into a std::string
+    std::string existing_cycles((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    
+    // Format the new cycle the same way as it's stored in the file
+    std::string new_cycle_str = std::to_string(w) + "x" + std::to_string(h) + "\n";
     for (size_t i = 0; i < path.size(); ++i) {
         new_cycle_str += "(" + std::to_string(path[i].first) + ", " + std::to_string(path[i].second) + ")";
         if (i < path.size() - 1) {
             new_cycle_str += " -> ";
         }
     }
-    new_cycle_str += "\n"; // Ensure the string ends with a newline to match the file format
-
-    if (file.is_open()) {
-        while (getline(file, line)) {
-            // Add a newline to the read line for matching the exact cycle format
-            line += '\n';
-            if (line == new_cycle_str) {
-                return true;
-            }
-        }
+    
+    // Check if the formatted new cycle string exists in the read file content
+    if (existing_cycles.find(new_cycle_str) != std::string::npos) {
+        return true;
     }
+
     return false;
 }
+
 
 
 void Hamiltonian::writeCycleToFile() {
