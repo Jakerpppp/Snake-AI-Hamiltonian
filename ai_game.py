@@ -11,7 +11,7 @@ GREEN1 = (0, 255, 0)
 GREEN2 = (0, 155, 0)
 BLACK = (0, 0, 0)
 BLOCK_SIZE = 20
-SPEED = 40
+SPEED = 20
 
 Point = namedtuple('Point', 'x, y')
 
@@ -100,7 +100,6 @@ class SnakeGameAI:
         # hits itself
         if pt in self.snake[1:]:
             return True
-
         return False
 
 
@@ -120,11 +119,65 @@ class SnakeGameAI:
         pygame.display.flip()
 
 
-
     def _move(self):
-        # Move the snake's head to the next point in the cycle
+        legal_moves = self.allLegalMoves()
+
+        # If legal moves are found, rank them to find the best one based on Manhattan distance to the food.
+        if legal_moves:
+            best_move = self.rankLegalMoves(legal_moves)
+            self.head = best_move
+            self.cycle_index = self.cycle.index((best_move.x // BLOCK_SIZE, best_move.y // BLOCK_SIZE))
+        else:
+            # This should ideally not occur, but as a fallback, continue with the cycle.
+            print("Here")
+            self._continue_cycle()
+
+
+    def _continue_cycle(self):
+        # Ensures the snake continues along the pre-determined cycle if no legal shortcuts are beneficial.
+        if self.cycle_index >= len(self.cycle):
+            self.cycle_index = 0  # Loop back to the start of the cycle.
+        next_cycle_point = self.cycle[self.cycle_index]
+        # Convert cycle point to pixel coordinates for consistency.
+        self.head = Point(next_cycle_point[0] * BLOCK_SIZE, next_cycle_point[1] * BLOCK_SIZE)
+        self.cycle_index += 1
+
+    def _move_with_cycle(self):
+        #Move the snake's head to the next point in the cycle
         if self.cycle_index >= len(self.cycle):
             self.cycle_index = 0  # Loop back to the start of the cycle
         next_point = self.cycle[self.cycle_index]
         self.head = Point(next_point[0] * BLOCK_SIZE, next_point[1] * BLOCK_SIZE)
         self.cycle_index += 1
+
+
+
+        
+    def allLegalMoves(self):
+        moves = []
+        # Directions based on grid coordinates, not pixels
+        for direction in [Direction.RIGHT, Direction.LEFT, Direction.UP, Direction.DOWN]:
+            if direction == Direction.RIGHT:
+                new_point = Point(self.head.x + BLOCK_SIZE, self.head.y)
+            elif direction == Direction.LEFT:
+                new_point = Point(self.head.x - BLOCK_SIZE, self.head.y)
+            elif direction == Direction.UP:
+                new_point = Point(self.head.x, self.head.y - BLOCK_SIZE)
+            elif direction == Direction.DOWN:
+                new_point = Point(self.head.x, self.head.y + BLOCK_SIZE)
+            
+            if not self.is_collision(new_point):
+                moves.append(new_point)
+        return moves
+    
+    def rankLegalMoves(self, moves):
+        #Use Manhattan Distance to rank the moves
+        current_best = [float('inf'), None]
+        for move in moves:
+            manhattan = self.manhattan_distance(move)
+            if manhattan < current_best[0]:
+                current_best = [manhattan, move]
+        return current_best[1]
+            
+    def manhattan_distance(self, move):
+        return abs(self.food.x - move.x) + abs(self.food.y - move.y)

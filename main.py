@@ -43,7 +43,6 @@ h = int(HEIGHT / BLOCK_SIZE)
 
 cycle = ham.hamiltonian_cycle()
 
-
 if cycle:
     ai = SnakeGameAI(cycle, WIDTH, HEIGHT)
     while True:
