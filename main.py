@@ -3,8 +3,8 @@ from prim_hamiltonian import Hamiltonian
 
 #Constants: Target w=640 h=480
 BLOCK_SIZE = 20
-WIDTH = 160
-HEIGHT = 160
+WIDTH = 640
+HEIGHT = 480
 
 pairs_dict = {}
 
@@ -32,14 +32,16 @@ ham = Hamiltonian(WIDTH, HEIGHT)
 w = int(WIDTH / BLOCK_SIZE)
 h = int(HEIGHT / BLOCK_SIZE)
 
-cycle_str = pairs_dict.get(f'{w}x{h}')
+# cycle_str = pairs_dict.get(f'{w}x{h}')
 
-if cycle_str:
-    print("Reading from File")
-    cycle = parse_cycle(cycle_str)
-else:
-    print("Not in File: Calculating")
-    cycle = ham.calculateHamiltonianCycle()
+# if cycle_str:
+#     print("Reading from File")
+#     cycle = parse_cycle(cycle_str)
+# else:
+#     print("Not in File: Calculating")
+#     cycle = ham.calculateHamiltonianCycle()
+
+cycle = ham.hamiltonian_cycle()
 
 
 if cycle:

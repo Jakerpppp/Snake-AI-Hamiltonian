@@ -11,7 +11,7 @@ BLOCK_SIZE = 20
 
 class Hamiltonian:
 
-    def __init__(self, width=200, height=200):
+    def __init__(self, width=640, height=480):
         self.w = int(width / BLOCK_SIZE)
         self.h = int(height / BLOCK_SIZE)
         self.graph = self.createGraph(self.w, self.h)
@@ -158,37 +158,17 @@ class Hamiltonian:
                 # Try the next direction clockwise (right-hand rule)
                 dir_index = (dir_index + 1) % 4
 
-        print(cycle)
         self.path = cycle
-
         return cycle
 
 
 
-
-
-            
-
-        
-
-
-
-        
-
-
-            
-
-
-    
-        
-
-
 # Example usage
 
-ham = Hamiltonian()
-cycle = ham.hamiltonian_cycle()
-if cycle:
-    print("Hamiltonian Cycle found:")
-    ham.visualiseCycle()
-else:
-    print("No Hamiltonian Cycle found.")
+# ham = Hamiltonian()
+# cycle = ham.hamiltonian_cycle()
+# if cycle:
+#     print("Hamiltonian Cycle found:")
+#     ham.visualiseCycle()
+# else:
+#     print("No Hamiltonian Cycle found.")
