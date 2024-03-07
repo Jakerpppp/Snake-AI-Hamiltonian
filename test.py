@@ -2,17 +2,10 @@ def prims_mst_grid(grid):
     num_rows = len(grid)
     num_cols = len(grid[0]) if num_rows > 0 else 0
     
-    # Each vertex is identified by its (row, col) position
-    # Start from the top-left cell
     start_vertex = (0, 0)
-    
-    # Set of visited vertices
     visited = set([start_vertex])
-    
-    # List of edges in the MST
     mst_edges = []
     
-    # Directions for up, down, left, right
     directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
     
     while len(visited) < num_rows * num_cols:
@@ -30,7 +23,11 @@ def prims_mst_grid(grid):
     
     return mst_edges
 
-# Example usage:
+def print_mst_edges(mst_edges):
+    print("MST Edges:")
+    for edge in mst_edges:
+        print(f"{edge[0]} -> {edge[1]}")
+
 grid = [
     [1, 1, 1],
     [1, 1, 1],
@@ -38,4 +35,26 @@ grid = [
 ]
 
 mst_edges = prims_mst_grid(grid)
-print("Edges in the MST:", mst_edges)
+print_mst_edges(mst_edges)
+
+position_within_maze = dict()
+        for x in range(self.w):
+            for y in range(self.h):
+                position_within_maze[(x, y)] = [(x // 2, y // 2), (x % 2, y % 2)]
+
+        while len(self.path) < self.w * self.h:
+            current_position = self.path[-1]
+            neighbours = self.get_neighbours(current_position[0], current_position[1], self.w - 1, self.h - 1)
+            print(current_position)
+
+            current_cell, cell_pos = position_within_maze[current_position]
+            maze_wall = tree_map[current_cell]
+
+            for neighbour in neighbours:
+                if neighbour not in self.path:
+                    neighbourhood = neighbours[neighbour]
+
+                    if current_cell != position_within_maze[neighbour][0]:
+                        if neighbourhood in maze_wall:
+                            cycle.append(neighbour)
+                            break

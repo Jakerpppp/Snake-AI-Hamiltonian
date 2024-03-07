@@ -2,6 +2,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 import random
 
+#References: https://github.com/illayyy/snake_ai?tab=readme-ov-file
+#https://johnflux.com/2015/05/02/nokia-6110-part-3-algorithms/
+
 
 BLOCK_SIZE = 20
 #ideal width=640 height=480
@@ -66,58 +69,124 @@ class Hamiltonian:
 
     #Hamiltonian Cycle using Prims Minimum Spanning Tree Algorithm
         
-    def calculatePrimsTree(self):
-        # Generate a Maze of Half Width and Half Height using Prims Algorithm
-        half_w = int(self.w / 2)
-        half_h = int(self.h / 2)
-        treeGraph = self.createGraph(half_w, half_h)
-        maze = [] #Order of Visiting the Nodes
-        #Tree: Add them all if they create a cycle or are already in the tree then reject them
-        for x in range(half_w):
-            for y in range(half_h):
-                if (x, y) not in maze:
-                    maze.append((x,y))
-        print(maze)
+    def get_neighbours(self, x , y, width, height):
+        frontier = []
+        if x > 0:
+            frontier.append((x-1, y))
+        if x < width - 1:
+            frontier.append((x+1, y))
+        if y > 0:
+            frontier.append((x, y-1))
+        if y < height - 1:
+            frontier.append((x, y+1))
+        return frontier
+    
+    # def get_directions(self, x, y, width, height):
+    #     directions = dict()
+    #     if x > 0:
+    #         directions[x, y] = "U"
+    #     if x < width - 1:
+    #         directions[x, y] = "D"
+    #     if y > 0:
+    #         directions[x, y] = "L"
+    #     if y < height - 1:
+    #         directions[x, y] = "R"
+    #     return directions
+        
+    def prims_mst_tree(self):
+        tree_map = dict()
+        neighbours = dict()
+        half_w = self.w // 2
+        half_h = self.h // 2
+
+        for x in range(self.w // 2):
+            for y in range(self.h // 2):
+                neighbours[(x, y)] = self.get_neighbours(x, y, half_w, half_h)
+                tree_map[(x, y)] = [] #Array as it may have multiple edges
+        
+        #Start at 0,0 for Now - Make Random Later
+        visited = [(0,0)]
+        frontier = neighbours[0,0]
+        while len(visited) < (self.w // 2) * (self.h // 2):
+            available = []
+            new_frontier = []
+            random_neighbour = random.choice(frontier)
+            for adj in neighbours[random_neighbour]:
+                if adj in visited:
+                    available.append(adj)
+
+                elif adj not in frontier:
+                    new_frontier.append(adj)
+
+            previously_checked_node = random.choice(available)
+
+            visited.append(random_neighbour)
+            tree_map[random_neighbour].append(previously_checked_node)
+            tree_map[previously_checked_node].append(random_neighbour)
+
+            
+            frontier.remove(random_neighbour)
+            frontier += new_frontier
+        return tree_map
+    
+    def hamiltonian_cycle(self):
+        #Follow the Trees path like a wall in a maze
+        tree_map = self.prims_mst_tree()
+        start = (0, 0)  # Starting at the top-left corner, for example
+        cycle = [start]
+        visited = set(start)
+        current = start
+
+        directions = [(0, -1), (1, 0), (0, 1), (-1, 0)]  # Up, Right, Down, Left
+        dir_index = 1  # Start by trying to go right
+
+        while len(cycle) < self.w * self.h:
+            next_dir = directions[dir_index]
+            next_cell = (current[0] + next_dir[0], current[1] + next_dir[1])
+
+            # Check if next cell is valid and not part of the MST or if it's not visited
+            if (0 <= next_cell[0] < self.w and 0 <= next_cell[1] < self.h and
+                    next_cell not in visited and 
+                    (current, next_cell) not in tree_map and 
+                    (next_cell, current) not in tree_map):
+                visited.add(next_cell)
+                cycle.append(next_cell)
+                current = next_cell
+                # Reset direction to try right first next time
+                dir_index = 1
+            else:
+                # Try the next direction clockwise (right-hand rule)
+                dir_index = (dir_index + 1) % 4
+
+        print(cycle)
+        self.path = cycle
+
+        return cycle
 
 
-    def noCycles(self, maze):
-        # Check if there are any cycles in the tree
-        visited = set()
-
-        def dfs(vertex, parent):
-            visited.add(vertex)
-            for neighbor in maze[vertex]:
-                if neighbor not in visited:
-                    parent[neighbor] = vertex
-                    if dfs(neighbor, parent):
-                        return True
-                elif parent[vertex] != neighbor:
-                    # A visited neighbor not equal to parent means a back edge is found, indicating a cycle
-                    return True
-            return False
-
-        for vertex in maze:
-            if vertex not in visited:
-                if dfs(vertex, None):
-                    return True
-        return False
-
-                
-                
 
 
 
+            
 
-        # Generate a Tree of Half Width and Half Height using Prims Algorithm
+        
 
 
 
+        
 
+
+            
+
+
+    
+        
 
 
 # Example usage
+
 ham = Hamiltonian()
-cycle = ham.calculatePrimsTree()
+cycle = ham.hamiltonian_cycle()
 if cycle:
     print("Hamiltonian Cycle found:")
     ham.visualiseCycle()
