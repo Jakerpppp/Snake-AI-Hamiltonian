@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import random
 
 
 BLOCK_SIZE = 20
@@ -10,60 +11,19 @@ class Hamiltonian:
     def __init__(self, width=200, height=200):
         self.w = int(width / BLOCK_SIZE)
         self.h = int(height / BLOCK_SIZE)
-        self.graph = self.createGraph()
+        self.graph = self.createGraph(self.w, self.h)
         self.visited = [[False for _ in range(self.h)] for _ in range(self.w)]
         self.path = []
 
     def getTotal(self):
         return self.w * self.h
     
-    def createGraph(self):
+    def createGraph(self, width, height):
         start = []
         for i in range(self.w):
             current = [1 for _ in range(self.h)]
             start.append(current)
         return start
-    
-    #Checks if valid move
-    def isSafe(self, x, y):
-        return 0 <= x < self.w and 0 <= y < self.h and self.graph[x][y] == 1 and not self.visited[x][y]
-    
-    #The Backtracking Algorithm
-    def calculateHamiltonianCycleUtil(self, x, y, steps):
-        # Base Case - If we have visited every single square and check if we can return to the start
-        if steps == self.getTotal():
-            # Check if the last cell is adjacent to the start cell (0, 0) to form a cycle
-            for dx, dy in [(0, -1), (-1, 0), (0, 1), (1, 0)]:  # Directions to check
-                if (x + dx, y + dy) == (0, 0):
-                    return True
-            return False  # Return to start is not possible, not a cycle
-
-        # Recursive Case Depth First Search
-        for dx, dy in [(0, -1), (-1, 0), (0, 1), (1, 0)]:  # Up, Left, Down, Right ->
-            next_x, next_y = x + dx, y + dy
-            if self.isSafe(next_x, next_y):
-                self.visited[next_x][next_y] = True
-                self.path.append((next_x, next_y))
-
-                if self.calculateHamiltonianCycleUtil(next_x, next_y, steps + 1):
-                    return True
-
-                # Backtrack
-                self.visited[next_x][next_y] = False
-                self.path.pop()
-
-        return False
-    
-    def calculateHamiltonianCycle(self):
-        # Initialize the starting point and visited matrix
-        self.visited[0][0] = True
-        self.path.append((0, 0))
-        
-        if self.calculateHamiltonianCycleUtil(0, 0, 1):
-            self.writeCycleToFile(self.path)
-            return self.path
-        else:
-            return None
         
     def cycleExists(self, new_cycle):
         try:
@@ -104,14 +64,62 @@ class Hamiltonian:
 
         plt.show()
 
+    #Hamiltonian Cycle using Prims Minimum Spanning Tree Algorithm
+        
+    def calculatePrimsTree(self):
+        # Generate a Maze of Half Width and Half Height using Prims Algorithm
+        half_w = int(self.w / 2)
+        half_h = int(self.h / 2)
+        treeGraph = self.createGraph(half_w, half_h)
+        maze = [] #Order of Visiting the Nodes
+        #Tree: Add them all if they create a cycle or are already in the tree then reject them
+        for x in range(half_w):
+            for y in range(half_h):
+                if (x, y) not in maze:
+                    maze.append((x,y))
+        print(maze)
 
 
-# height = 120
-# width = 120
-# ham = Hamiltonian(height, width)
-# cycle = ham.calculateHamiltonianCycle()
-# if cycle:
-#     print("Hamiltonian Cycle found:")
-#     ham.visualiseCycle()
-# else:
-#     print("No Hamiltonian Cycle found.")
+    def noCycles(self, maze):
+        # Check if there are any cycles in the tree
+        visited = set()
+
+        def dfs(vertex, parent):
+            visited.add(vertex)
+            for neighbor in maze[vertex]:
+                if neighbor not in visited:
+                    parent[neighbor] = vertex
+                    if dfs(neighbor, parent):
+                        return True
+                elif parent[vertex] != neighbor:
+                    # A visited neighbor not equal to parent means a back edge is found, indicating a cycle
+                    return True
+            return False
+
+        for vertex in maze:
+            if vertex not in visited:
+                if dfs(vertex, None):
+                    return True
+        return False
+
+                
+                
+
+
+
+
+        # Generate a Tree of Half Width and Half Height using Prims Algorithm
+
+
+
+
+
+
+# Example usage
+ham = Hamiltonian()
+cycle = ham.calculatePrimsTree()
+if cycle:
+    print("Hamiltonian Cycle found:")
+    ham.visualiseCycle()
+else:
+    print("No Hamiltonian Cycle found.")

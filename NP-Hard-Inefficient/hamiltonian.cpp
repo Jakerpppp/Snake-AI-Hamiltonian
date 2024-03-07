@@ -4,7 +4,7 @@
 #include <string>
 
 const int BLOCK_SIZE = 20;
-const std::pair<int, int> directions[4] = {{1, 0}, {0, 1}, {-1, 0}, {0, -1}}; // Right, Down, 
+const std::pair<int, int> directions[4] = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}}; // Right, Left, Up, Down
 
 class Hamiltonian {
 public:
@@ -130,7 +130,8 @@ void Hamiltonian::writeCycleToFile() {
 
 
 int main() {
-    int width = 120, height = 120; // Define width and height
+    //We want 640x480 = 
+    int width = 200, height = 200; // Define width and height
     Hamiltonian hamiltonian(width, height); // Use the defined width and height
     auto cycle = hamiltonian.calculateHamiltonianCycle();
 
@@ -140,7 +141,7 @@ int main() {
     if (!cycle.empty()) {
         std::cout << "Hamiltonian Cycle found for " << w << "x" << h << ":\n";
         for (size_t i = 0; i < cycle.size(); ++i) {
-            std::cout << "(" << cycle[i].first * BLOCK_SIZE << ", " << cycle[i].second * BLOCK_SIZE << ")";
+            std::cout << "(" << cycle[i].first << ", " << cycle[i].second << ")";
             // Only add " -> " if this is not the last element
             if (i < cycle.size() - 1) {
                 std::cout << " -> ";

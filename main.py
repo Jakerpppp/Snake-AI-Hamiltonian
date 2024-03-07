@@ -1,10 +1,10 @@
 from ai_game import SnakeGameAI
-from hamiltonian import Hamiltonian
+from prim_hamiltonian import Hamiltonian
 
-#Constants
+#Constants: Target w=640 h=480
 BLOCK_SIZE = 20
-WIDTH = 140
-HEIGHT = 120
+WIDTH = 160
+HEIGHT = 160
 
 pairs_dict = {}
 
@@ -39,7 +39,7 @@ if cycle_str:
     cycle = parse_cycle(cycle_str)
 else:
     print("Not in File: Calculating")
-    #cycle = ham.calculateHamiltonianCycle()
+    cycle = ham.calculateHamiltonianCycle()
 
 
 if cycle:
