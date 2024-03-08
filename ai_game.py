@@ -128,13 +128,13 @@ class SnakeGameAI:
         self.head = Point(next_cycle_point[0] * BLOCK_SIZE, next_cycle_point[1] * BLOCK_SIZE)
         self.cycle_index += 1
 
-        if self.is_collision(self.head):
-            print("Collision would be found here: Checking legal moves")
-            self.head = random.choice(legal_moves)
-            if self.head:
-                print("Move Successful")
-            else:
-                time.sleep(100)
+        # if self.is_collision(self.head):
+        #     print("Collision would be found here: Checking legal moves")
+        #     self.head = random.choice(legal_moves)
+        #     if self.head:
+        #         print("Move Successful")
+        #     else:
+        #         time.sleep(100)
         
         # if len(self.snake) < len(self.cycle) * 0.3 : #If the snake is less than 75% of the grid, use Shortcuts
         #     #Check if Legal and Safe Moves are able to be made
@@ -185,6 +185,7 @@ class SnakeGameAI:
                 moves.append(new_point)
         return moves
     
+
     def rankLegalMoves(self, moves):
         #Use Manhattan Distance to rank the moves
         current_best = [float('inf'), None]
@@ -197,10 +198,10 @@ class SnakeGameAI:
                     current_best = [skip_dist, move]
         return current_best[1]
     
+    #Its this function here that needs work properly
     def isOrderedAfterMove(self, potential_move):
         # Simulate the move
-        simulated_snake = self.snake[:-1] # Create a copy of the snake
-        simulated_snake.insert(0, potential_move) # Simulate adding the new head
+        simulated_snake = [potential_move] + self.snake[:-1] # Create a copy of the snake
         head_index = self.cycle.index((potential_move.x // BLOCK_SIZE, potential_move.y // BLOCK_SIZE))
         tail_index = self.cycle.index((simulated_snake[-1].x // BLOCK_SIZE, simulated_snake[-1].y // BLOCK_SIZE))
 
