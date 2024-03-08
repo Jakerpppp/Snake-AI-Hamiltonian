@@ -11,7 +11,7 @@ GREEN1 = (0, 255, 0)
 GREEN2 = (0, 155, 0)
 BLACK = (0, 0, 0)
 BLOCK_SIZE = 20
-SPEED = 20
+SPEED = 200
 
 Point = namedtuple('Point', 'x, y')
 
@@ -122,27 +122,39 @@ class SnakeGameAI:
     def _move(self):
         legal_moves = self.allLegalMoves()
 
-        # If legal moves are found, rank them to find the best one based on Manhattan distance to the food.
-        if legal_moves:
-            best_move = self.rankLegalMoves(legal_moves)
-            self.head = best_move
-            self.cycle_index = self.cycle.index((best_move.x // BLOCK_SIZE, best_move.y // BLOCK_SIZE))
-        else:
-            # This should ideally not occur, but as a fallback, continue with the cycle.
-            print("Here")
-            self._continue_cycle()
-
-
-    def _continue_cycle(self):
-        # Ensures the snake continues along the pre-determined cycle if no legal shortcuts are beneficial.
         if self.cycle_index >= len(self.cycle):
             self.cycle_index = 0  # Loop back to the start of the cycle.
         next_cycle_point = self.cycle[self.cycle_index]
-        # Convert cycle point to pixel coordinates for consistency.
         self.head = Point(next_cycle_point[0] * BLOCK_SIZE, next_cycle_point[1] * BLOCK_SIZE)
         self.cycle_index += 1
 
-    def _move_with_cycle(self):
+        if self.is_collision(self.head):
+            print("Collision would be found here: Checking legal moves")
+            self.head = random.choice(legal_moves)
+            if self.head:
+                print("Move Successful")
+            else:
+                time.sleep(100)
+        
+        # if len(self.snake) < len(self.cycle) * 0.3 : #If the snake is less than 75% of the grid, use Shortcuts
+        #     #Check if Legal and Safe Moves are able to be made
+        #     if legal_moves:
+        #         best_move = self.rankLegalMoves(legal_moves)
+        #         if best_move:
+        #             best_move_index = self.cycle.index((best_move.x // BLOCK_SIZE, best_move.y // BLOCK_SIZE))
+        #             head_index = self.cycle.index((self.head.x // BLOCK_SIZE, self.head.y // BLOCK_SIZE))
+        #             food_index = self.cycle.index((self.food.x // BLOCK_SIZE, self.food.y // BLOCK_SIZE))
+        #             skip_dist1 = self.calculateSkipDistance(head_index, food_index)
+        #             skip_dist2 = self.calculateSkipDistance(best_move_index, food_index)
+        #             if skip_dist2 < skip_dist1:
+        #                 self.head = best_move
+        #                 self.cycle_index = self.cycle.index((best_move.x // BLOCK_SIZE, best_move.y // BLOCK_SIZE))
+        #                 if self.is_collision(self.head):
+        #                     print("Collision Found via best move")
+            
+
+    
+    def _move_with_only_cycle(self):
         #Move the snake's head to the next point in the cycle
         if self.cycle_index >= len(self.cycle):
             self.cycle_index = 0  # Loop back to the start of the cycle
@@ -150,9 +162,12 @@ class SnakeGameAI:
         self.head = Point(next_point[0] * BLOCK_SIZE, next_point[1] * BLOCK_SIZE)
         self.cycle_index += 1
 
+    def calculateSkipDistance(self, move_index, food_index):
+        skip_dist = food_index - move_index
+        if skip_dist < 0:
+            skip_dist = len(self.cycle) - abs(skip_dist)
+        return skip_dist
 
-
-        
     def allLegalMoves(self):
         moves = []
         # Directions based on grid coordinates, not pixels
@@ -174,10 +189,38 @@ class SnakeGameAI:
         #Use Manhattan Distance to rank the moves
         current_best = [float('inf'), None]
         for move in moves:
-            manhattan = self.manhattan_distance(move)
-            if manhattan < current_best[0]:
-                current_best = [manhattan, move]
+            if self.isOrderedAfterMove(move) and move not in self.snake:
+                move_index = self.cycle.index((move.x // BLOCK_SIZE, move.y // BLOCK_SIZE))
+                food_index = self.cycle.index((self.food.x // BLOCK_SIZE, self.food.y // BLOCK_SIZE))
+                skip_dist = self.calculateSkipDistance(move_index, food_index)
+                if skip_dist < current_best[0]:
+                    current_best = [skip_dist, move]
         return current_best[1]
-            
-    def manhattan_distance(self, move):
-        return abs(self.food.x - move.x) + abs(self.food.y - move.y)
+    
+    def isOrderedAfterMove(self, potential_move):
+        # Simulate the move
+        simulated_snake = self.snake[:-1] # Create a copy of the snake
+        simulated_snake.insert(0, potential_move) # Simulate adding the new head
+        head_index = self.cycle.index((potential_move.x // BLOCK_SIZE, potential_move.y // BLOCK_SIZE))
+        tail_index = self.cycle.index((simulated_snake[-1].x // BLOCK_SIZE, simulated_snake[-1].y // BLOCK_SIZE))
+
+
+
+        if head_index > tail_index:
+            for i in range(0, tail_index):
+                if self.cycle[i] in self.snake:
+
+                    return False
+            for i in range(head_index + 1, len(self.cycle)):
+                if self.cycle[i] in self.snake:
+                
+                    return False
+        # If the tail has overtaken the head, check that no snake segments appear between the head and the tail.
+        else:
+            for i in range(head_index + 1, tail_index):
+                if self.cycle[i] in self.snake:
+
+                    return False
+        return True
+
+
