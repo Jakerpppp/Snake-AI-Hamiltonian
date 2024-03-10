@@ -11,7 +11,7 @@ GREEN1 = (0, 255, 0)
 GREEN2 = (0, 155, 0)
 BLACK = (0, 0, 0)
 BLOCK_SIZE = 20
-SPEED = 20
+SPEED = 100
 
 Point = namedtuple('Point', 'x, y')
 
@@ -127,15 +127,15 @@ class SnakeGameAI:
         next_cycle_point = self.cycle[self.cycle_index]
         self.head = Point(next_cycle_point[0] * BLOCK_SIZE, next_cycle_point[1] * BLOCK_SIZE)
         self.cycle_index += 1
-        if self.is_collision(self.head):
-            print("Collision would be found here: Checking legal moves")
-            self.head = random.choice(legal_moves)
-            if self.head:
-                print("Move Successful")
-            else:
-                time.sleep(100)
+        # if self.is_collision(self.head):
+        #     print("Collision would be found here: Checking legal moves")
+        #     self.head = random.choice(legal_moves)
+        #     if self.head:
+        #         print("Move Successful")
+        #     else:
+        #         time.sleep(100)
         
-        if len(self.snake) < len(self.cycle) * 0.75 : #If the snake is less than 75% of the grid, use Shortcuts
+        if len(self.snake) < len(self.cycle) * 0.10 : #If the snake is less than 75% of the grid, use Shortcuts
             #Check if Legal and Safe Moves are able to be made
             if legal_moves:
                 best_move = self.rankLegalMoves(legal_moves)

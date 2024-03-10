@@ -105,8 +105,9 @@ class Hamiltonian:
                 tree_map[(x, y)] = [] #Array as it may have multiple edges
         
         #Start at 0,0 for Now - Make Random Later
-        visited = [(0,0)]
-        frontier = neighbours[0,0]
+        random_start = (0,0)
+        visited = [random_start]
+        frontier = neighbours[random_start]
         while len(visited) < (self.w // 2) * (self.h // 2):
             available = []
             new_frontier = []
@@ -131,14 +132,14 @@ class Hamiltonian:
     
     def hamiltonian_cycle(self):
         #Follow the Trees path like a wall in a maze
-        tree_map = self.prims_mst_tree()
-        start = (0, 0)  # Starting at the top-left corner, for example
+        tree_map  = self.prims_mst_tree()
+        start = (0,0)
         cycle = [start]
         visited = set(start)
         current = start
 
         directions = [(0, -1), (1, 0), (0, 1), (-1, 0)]  # Up, Right, Down, Left
-        dir_index = 1  # Start by trying to go right
+        dir_index = 3  # Start by trying to go right
 
         while len(cycle) < self.w * self.h:
             next_dir = directions[dir_index]
