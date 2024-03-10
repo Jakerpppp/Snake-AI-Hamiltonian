@@ -11,7 +11,7 @@ GREEN1 = (0, 255, 0)
 GREEN2 = (0, 155, 0)
 BLACK = (0, 0, 0)
 BLOCK_SIZE = 20
-SPEED = 200
+SPEED = 20
 
 Point = namedtuple('Point', 'x, y')
 
@@ -80,11 +80,11 @@ class SnakeGameAI:
             return game_over
 
         # 4. place new food or just move
-        if self.head == self.food:
-            self.score += 1
-            self._place_food()
-        else:
-            self.snake.pop()
+        # if self.head == self.food:
+        #     self.score += 1
+        #     self._place_food()
+        # else:
+        #     self.snake.pop()
         
         # 5. update ui and clock
         self._update_ui()
@@ -127,30 +127,33 @@ class SnakeGameAI:
         next_cycle_point = self.cycle[self.cycle_index]
         self.head = Point(next_cycle_point[0] * BLOCK_SIZE, next_cycle_point[1] * BLOCK_SIZE)
         self.cycle_index += 1
-
-        # if self.is_collision(self.head):
-        #     print("Collision would be found here: Checking legal moves")
-        #     self.head = random.choice(legal_moves)
-        #     if self.head:
-        #         print("Move Successful")
-        #     else:
-        #         time.sleep(100)
+        if self.is_collision(self.head):
+            print("Collision would be found here: Checking legal moves")
+            self.head = random.choice(legal_moves)
+            if self.head:
+                print("Move Successful")
+            else:
+                time.sleep(100)
         
-        # if len(self.snake) < len(self.cycle) * 0.3 : #If the snake is less than 75% of the grid, use Shortcuts
-        #     #Check if Legal and Safe Moves are able to be made
-        #     if legal_moves:
-        #         best_move = self.rankLegalMoves(legal_moves)
-        #         if best_move:
-        #             best_move_index = self.cycle.index((best_move.x // BLOCK_SIZE, best_move.y // BLOCK_SIZE))
-        #             head_index = self.cycle.index((self.head.x // BLOCK_SIZE, self.head.y // BLOCK_SIZE))
-        #             food_index = self.cycle.index((self.food.x // BLOCK_SIZE, self.food.y // BLOCK_SIZE))
-        #             skip_dist1 = self.calculateSkipDistance(head_index, food_index)
-        #             skip_dist2 = self.calculateSkipDistance(best_move_index, food_index)
-        #             if skip_dist2 < skip_dist1:
-        #                 self.head = best_move
-        #                 self.cycle_index = self.cycle.index((best_move.x // BLOCK_SIZE, best_move.y // BLOCK_SIZE))
-        #                 if self.is_collision(self.head):
-        #                     print("Collision Found via best move")
+        if len(self.snake) < len(self.cycle) * 0.75 : #If the snake is less than 75% of the grid, use Shortcuts
+            #Check if Legal and Safe Moves are able to be made
+            if legal_moves:
+                best_move = self.rankLegalMoves(legal_moves)
+                if best_move:
+                    best_move_index = self.cycle.index((best_move.x // BLOCK_SIZE, best_move.y // BLOCK_SIZE))
+                    head_index = self.cycle.index((self.head.x // BLOCK_SIZE, self.head.y // BLOCK_SIZE))
+                    food_index = self.cycle.index((self.food.x // BLOCK_SIZE, self.food.y // BLOCK_SIZE))
+                    skip_dist1 = self.calculateSkipDistance(head_index, food_index)
+                    skip_dist2 = self.calculateSkipDistance(best_move_index, food_index)
+                    if skip_dist2 < skip_dist1:
+                        self.head = best_move
+                        self.cycle_index = self.cycle.index((best_move.x // BLOCK_SIZE, best_move.y // BLOCK_SIZE))
+                        
+        if self.head == self.food:
+            self.score += 1
+            self._place_food()
+        else:
+            self.snake.pop()
             
 
     
@@ -205,22 +208,20 @@ class SnakeGameAI:
         head_index = self.cycle.index((potential_move.x // BLOCK_SIZE, potential_move.y // BLOCK_SIZE))
         tail_index = self.cycle.index((simulated_snake[-1].x // BLOCK_SIZE, simulated_snake[-1].y // BLOCK_SIZE))
 
+        cycle_as_blocks = [Point(x * BLOCK_SIZE, y * BLOCK_SIZE) for x, y in self.cycle]
 
 
         if head_index > tail_index:
             for i in range(0, tail_index):
-                if self.cycle[i] in self.snake:
-
+                if cycle_as_blocks[i] in self.snake:
                     return False
             for i in range(head_index + 1, len(self.cycle)):
-                if self.cycle[i] in self.snake:
-                
+                if cycle_as_blocks[i] in self.snake:
                     return False
         # If the tail has overtaken the head, check that no snake segments appear between the head and the tail.
         else:
             for i in range(head_index + 1, tail_index):
-                if self.cycle[i] in self.snake:
-
+                if cycle_as_blocks[i] in self.snake:
                     return False
         return True
 
